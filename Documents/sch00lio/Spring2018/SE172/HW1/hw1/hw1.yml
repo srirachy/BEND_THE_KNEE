@@ -1,0 +1,19 @@
+---
+- hosts: bdkhelloworld.com
+  remote_user: srirachy
+  become: sudo
+  vars:
+   http_port: 80
+   max_clients: 200
+  tasks:
+   - action: ping
+   - name: ensure apache is running (and enable it at boot)
+     service: name=apache2 state=started enabled=yes
+   - name: copy application code to document root
+     template: src=front.html dest=/var/www/bdkhelloworld.com/index.html
+     notify: restart apache2
+
+  handlers:
+   - name: restart apache2
+     service: name=apache2 state=restarted
+
